@@ -1,4 +1,16 @@
-FROM adoptopenjdk/openjdk11-openj9:jdk-11.0.1.13-alpine-slim
-COPY build/libs/helloazure-*-all.jar helloazure.jar
+FROM gradle:jdk11 as builder
+COPY . /code
+
+WORKDIR /code
+
+# build the gradle cache
+RUN gradle dependencies
+
+RUN gradle build
+
+# ---- backend -----
+
+FROM openjdk:11-jre-stretch as backend
 EXPOSE 8080
-CMD java -Dcom.sun.management.jmxremote -noverify ${JAVA_OPTS} -jar helloazure.jar
+COPY --from=builder /code/build/libs/*-all.jar /app/app.jar
+CMD [ "java", "-Dcom.sun.management.jmxremote", "-noverify", "${JAVA_OPTS}", "-jar", "/app/app.jar" ]
