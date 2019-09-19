@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: helloazure
+---
+testFramework: junit
+sourceLanguage: java
