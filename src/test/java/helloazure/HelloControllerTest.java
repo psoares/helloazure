@@ -28,6 +28,6 @@ class HelloControllerTest {
         String response = client.toBlocking()
                 .retrieve(HttpRequest.GET("/hello"));
 
-        assertEquals("Hello world!", response);
+        assertEquals("Hello azure!", response);
     }
 }
