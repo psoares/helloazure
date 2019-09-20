@@ -1,5 +1,6 @@
 package helloazure;
 
+import io.micronaut.cache.annotation.Cacheable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Controller;

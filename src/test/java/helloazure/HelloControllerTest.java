@@ -1,45 +1,33 @@
 package helloazure;
 
-import io.micronaut.context.ApplicationContext;
-import io.micronaut.core.util.CollectionUtils;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.client.RxHttpClient;
+import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.annotation.Client;
 import io.micronaut.runtime.server.EmbeddedServer;
 import io.micronaut.test.annotation.MicronautTest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @MicronautTest
 class HelloControllerTest {
 
-    static EmbeddedServer embeddedServer;
+    @Inject
+    EmbeddedServer server;
 
-    @BeforeAll
-    public static void setup() {
-        embeddedServer = ApplicationContext.run(
-                EmbeddedServer.class
-        );
-    }
-
-    @AfterAll
-    public static void cleanup() {
-        if (embeddedServer != null) {
-            embeddedServer.stop();
-        }
-    }
+    @Inject
+    @Client("/")
+    HttpClient client;
 
     @Test
     void hello() {
-        try (RxHttpClient client = embeddedServer.getApplicationContext().createBean(
-                RxHttpClient.class, embeddedServer.getURL())) {
-            assertEquals(HttpStatus.OK, client.toBlocking().exchange("/hello").status());
-            assertEquals("Hello world!", client.toBlocking().exchange("/hello").getBody(String.class));
-        }
+        assertEquals(HttpStatus.OK, client.toBlocking().exchange("/hello").status());
+        String response = client.toBlocking()
+                .retrieve(HttpRequest.GET("/hello"));
 
+        assertEquals("Hello world!", response);
     }
 }
