@@ -27,7 +27,7 @@ class HelloControllerTest {
         assertEquals(HttpStatus.OK, client.toBlocking().exchange("/hello").status());
         String response = client.toBlocking()
                 .retrieve(HttpRequest.GET("/hello"));
-
+        assertEquals(200, client.toBlocking().exchange(HttpRequest.GET("/hello")).code());
         assertEquals("Hello azure!", response);
     }
 }
